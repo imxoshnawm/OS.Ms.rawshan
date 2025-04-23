@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role of OS in Cars</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0f1923;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #00bfff;
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(0, 191, 255, 0.8);
+            }
+        }
+        
+        .date-time {
+            font-size: 18px;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+        
+        .slides-container {
+            position: relative;
+            overflow: hidden;
+            min-height: 70vh;
+        }
+        
+        .slide {
+            background-color: rgba(15, 25, 35, 0.85);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border-left: 5px solid #00bfff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(50px);
+            transition: opacity 0.7s ease, transform 0.7s ease, visibility 0.7s;
+            z-index: 2;
+        }
+        
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #00bfff;
+        }
+        
+        p, li {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        ul, ol {
+            padding-left: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .highlight {
+            color: #00bfff;
+            font-weight: bold;
+        }
+        
+        .two-columns {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .column {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        /* Background animation elements */
+        .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .grid-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(0, 191, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 191, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            transform: perspective(500px) rotateX(60deg);
+            transform-origin: center center;
+        }
+        
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: rgba(0, 191, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .circuit-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15;
+        }
+        
+        .circuit-line {
+            position: absolute;
+            border: 1px solid #00bfff;
+            border-radius: 5px;
+        }
+        
+        .circuit-node {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #00bfff;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #00bfff;
+        }
+        
+        .binary {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            color: #00bfff;
+            font-size: 12px;
+            opacity: 0.2;
+            animation: fadeInOut 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% {
+                opacity: 0.05;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+        
+        /* Car animation */
+        .car-animation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .road {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #333;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .lane-marker {
+            position: absolute;
+            bottom: 24px;
+            width: 50px;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.6);
+            transition: transform 0.3s;
+        }
+        
+        .car {
+            position: absolute;
+            bottom: 30px;
+            width: 120px;
+            height: 35px;
+            background-color: #e74c3c;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            animation: driveCar 15s linear infinite;
+            transform-style: preserve-3d;
+        }
+        
+        .car::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            width: 80px;
+            height: 22px;
+            background-color: #3498db;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .car::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 15px;
+            width: 20px;
+            height: 20px;
+            background-color: #333;
+            border-radius: 50%;
+            box-shadow: 70px 0 0 #333;
+        }
+        
+        .car-light {
+            position: absolute;
+            top: 10px;
+            right: 0;
+            width: 12px;
+            height: 8px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 0 10px #fff, 0 0 20px #fff;
+            animation: flicker 0.5s ease-in-out infinite alternate;
+        }
+        
+        @keyframes flicker {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes driveCar {
+            0% {
+                transform: translateX(-200px);
+            }
+            100% {
+                transform: translateX(calc(100vw + 200px));
+            }
+        }
+        
+        .slide-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+        }
+        
+        .slide-nav button {
+            background-color: #00bfff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 191, 255, 0.5);
+        }
+        
+        .slide-nav button:hover {
+            background-color: #0098cc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.7);
+        }
+        
+        .slide-nav button:active {
+            transform: translateY(1px);
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background-color: #00bfff;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
+            z-index: 25;
+            transition: width 0.5s ease;
+        }
+        
+        .slide-indicator {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+        }
+        
+        .indicator-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(0, 191, 255, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .indicator-dot.active {
+            background-color: #00bfff;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
+            transform: scale(1.2);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 28px;
+            }
+            
+            h2 {
+                font-size: 48px;
+            }
+            
+            p, li {
+                font-size: 32px;
+            }
+            
+            .two-columns {
+                flex-direction: column;
+            }
+            
+            .column {
+                min-width: 100%;
+            }
+        }
+
+        /* Add new animation styles to enhance the presentation */
+.slide {
+    transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out, visibility 0.7s;
+}
+
+.slide.active {
+    animation: slideIn 0.7s ease forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhanced road animation */
+.road {
+    background: linear-gradient(to bottom, #333, #222);
+    box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.8);
+}
+
+.lane-marker {
+    animation: moveMarkers 2s linear infinite;
+}
+
+@keyframes moveMarkers {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-120px);
+    }
+}
+
+/* Enhanced car animation */
+.car {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    animation: driveCar 15s linear infinite, carHover 1.5s ease-in-out infinite;
+}
+
+@keyframes carHover {
+    0%, 100% {
+        transform: translateX(var(--x-pos, 0)) translateY(0);
+    }
+    50% {
+        transform: translateX(var(--x-pos, 0)) translateY(-3px);
+    }
+}
+
+/* Enhanced binary elements animation */
+.binary {
+    animation: binaryFade 3s ease-in-out infinite;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(0, 191, 255, 0.7);
+}
+
+@keyframes binaryFade {
+    0%, 100% {
+        opacity: 0.05;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.3;
+        transform: scale(1.2);
+    }
+}
+
+/* Enhanced button effects */
+.slide-nav button {
+    background: linear-gradient(to bottom, #00bfff, #0095cc);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.slide-nav button:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+}
+
+.slide-nav button:hover:after {
+    left: 100%;
+}
+
+/* Add a pulse effect to active indicator dot */
+.indicator-dot.active {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 191, 255, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(0, 191, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 191, 255, 0);
+    }
+}
+
+/* Enhanced progress bar */
+.progress-bar {
+    box-shadow: 0 0 15px rgba(0, 191, 255, 0.7);
+    background: linear-gradient(to right, #0080ff, #00bfff);
+    animation: progressPulse 2s ease-in-out infinite;
+}
+
+@keyframes progressPulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(0, 191, 255, 0.9);
+    }
+}
+
+/* Enhanced title animation */
+h1 {
+    animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+    0%, 100% {
+        text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+        transform: scale(1);
+    }
+    50% {
+        text-shadow: 0 0 20px rgba(0, 191, 255, 0.8), 0 0 30px rgba(0, 191, 255, 0.4);
+        transform: scale(1.02);
+    }
+}
+
+/* Highlight text with improved animation */
+.highlight {
+    position: relative;
+    animation: highlightPulse 2s ease-in-out infinite;
+}
+
+@keyframes highlightPulse {
+    0%, 100% {
+        color: #00bfff;
+    }
+    50% {
+        color: #80dfff;
+    }
+}
+
+/* Add a subtle shine effect to slide backgrounds */
+.slide {
+    position: relative;
+    overflow: hidden;
+}
+
+.slide::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0, 191, 255, 0.03) 0%, transparent 60%);
+    animation: rotateBg 20s linear infinite;
+    z-index: -1;
+}
+
+@keyframes rotateBg {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+
+.slide {
+    background-color: rgba(15, 25, 35, 0.85);
+    border-radius: 10px;
+    padding: 30px;
+    margin-bottom: 40px;
+    border-left: 5px solid #00bfff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    visibility: hidden;
+    /* لێرە transform ـەکان لاببەیت */
+    transition: opacity 0.7s ease, visibility 0.7s;
+    z-index: 2;
+}
+
+.slide.active {
+    opacity: 1;
+    visibility: visible;
+    /* ئێستا بێ transform ـە */
+}
+
+
+.car-image {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 168, 255, 0.3);
+    }
+    
+    .car-image img {
+        max-width: 100%;
+        height: auto;
+        transition: transform 0.3s ease;
+        border: 2px solid rgba(0, 168, 255, 0.5);
+    }
+    
+    .car-image img:hover {
+        transform: scale(1.02);
+    }
+    
+    .developer-image {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #00a8ff;
+        box-shadow: 0 0 15px rgba(0, 168, 255, 0.5);
+        margin: 20px auto;
+        display: block;
+        transition: all 0.3s ease;
+    }
+    
+    .developer-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(0, 168, 255, 0.8);
+    }
+    
+    /* For slides with images */
+    #slide5 .car-image,
+    #slide6 .car-image,
+    #slide7 .car-image,
+    #slide8 .car-image,
+    #slide9 .car-image,
+    #slide10 .car-image {
+        max-height: 300px;
+        margin-top: 30px;
+    }
+    
+    /* Create a tech-like frame for the images */
+    .car-image::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        border: 1px solid rgba(0, 168, 255, 0.3);
+        border-radius: 10px;
+        z-index: -1;
+    }
+    
+    .car-image::after {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        border: 1px dashed rgba(0, 168, 255, 0.2);
+        border-radius: 12px;
+        z-index: -2;
+    }
+    </style>
+</head>
+<body>
+    <div class="animated-background">
+        <div class="grid-lines"></div>
+        <div class="particles"></div>
+        <div class="circuit-lines"></div>
+    </div>
+    
+    <div class="car-animation">
+        <div class="road"></div>
+    </div>
+    
+    <div class="progress-bar"></div>
+    
+
+
+    <!-- ئەم بەشە زیاد بکە بۆ نیشاندانی سەیارەکە -->
+<div style="text-align: center; margin: 20px 0;">
+ 
+       
+            
+</div>
+
+
+
+    <div class="container">
+        <header>
+            <h1>Role of Operating Systems in Cars</h1>
+        </header>
+        
+        <div class="slide" id="slide1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+                <!-- Background -->
+                <linearGradient id="road-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#1a2b3c" />
+                  <stop offset="100%" stop-color="#0c1824" />
+                </linearGradient>
+                <rect width="800" height="400" fill="url(#road-gradient)" />
+                
+                <!-- Circuit-like patterns in background -->
+                <g opacity="0.2">
+                  <path d="M0,100 Q200,150 400,100 T800,100" stroke="#00a8ff" fill="none" stroke-width="1" />
+                  <path d="M0,200 Q200,250 400,200 T800,200" stroke="#00a8ff" fill="none" stroke-width="1" />
+                  <path d="M0,300 Q200,350 400,300 T800,300" stroke="#00a8ff" fill="none" stroke-width="1" />
+                  <path d="M100,0 Q150,200 100,400" stroke="#00a8ff" fill="none" stroke-width="1" />
+                  <path d="M300,0 Q350,200 300,400" stroke="#00a8ff" fill="none" stroke-width="1" />
+                  <path d="M500,0 Q550,200 500,400" stroke="#00a8ff" fill="none" stroke-width="1" />
+                  <path d="M700,0 Q750,200 700,400" stroke="#00a8ff" fill="none" stroke-width="1" />
+                </g>
+                
+                <!-- Road -->
+                <rect x="0" y="300" width="800" height="50" fill="#333" />
+                <g id="road-lines">
+                  <rect x="50" y="323" width="60" height="4" fill="white" opacity="0.7" />
+                  <rect x="150" y="323" width="60" height="4" fill="white" opacity="0.7" />
+                  <rect x="250" y="323" width="60" height="4" fill="white" opacity="0.7" />
+                  <rect x="350" y="323" width="60" height="4" fill="white" opacity="0.7" />
+                  <rect x="450" y="323" width="60" height="4" fill="white" opacity="0.7" />
+                  <rect x="550" y="323" width="60" height="4" fill="white" opacity="0.7" />
+                  <rect x="650" y="323" width="60" height="4" fill="white" opacity="0.7" />
+                  <rect x="750" y="323" width="60" height="4" fill="white" opacity="0.7" />
+                </g>
+                
+                <!-- Car Group -->
+                <g id="car">
+                  <!-- Car Body -->
+                  <linearGradient id="car-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#0088ff" />
+                    <stop offset="100%" stop-color="#00ddff" />
+                  </linearGradient>
+                  <path d="M300,260 L320,220 L480,220 L510,260 L510,290 L300,290 Z" fill="url(#car-gradient)" />
+                  
+                  <!-- Car Windows -->
+                  <path d="M330,260 L340,230 L460,230 L480,260 Z" fill="#161e2f" />
+                  <path d="M350,260 L355,240 L420,240 L420,260 Z" fill="#1d2b41" />
+                  <path d="M435,260 L435,240 L460,240 L475,260 Z" fill="#1d2b41" />
+                  
+                  <!-- Car Details -->
+                  <rect x="300" y="260" width="210" height="10" fill="#051e33" />
+                  <rect x="510" y="270" width="10" height="10" fill="#051e33" />
+                  <rect x="290" y="270" width="10" height="10" fill="#051e33" />
+                  
+                  <!-- Car Lights -->
+                  <rect x="300" y="250" width="20" height="10" fill="#ffcc00" rx="5" ry="5">
+                    <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite" />
+                  </rect>
+                  <rect x="490" y="250" width="20" height="10" fill="#ff0000" rx="5" ry="5">
+                    <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite" />
+                  </rect>
+                  
+                  <!-- Car Wheels -->
+                  <g id="front-wheel">
+                    <circle cx="330" cy="290" r="20" fill="#222" />
+                    <circle cx="330" cy="290" r="10" fill="#444" />
+                    <rect x="329" y="280" width="2" height="20" fill="#555">
+                      <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 330 290" to="360 330 290" dur="1s" repeatCount="indefinite" />
+                    </rect>
+                    <rect x="320" y="289" width="20" height="2" fill="#555">
+                      <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 330 290" to="360 330 290" dur="1s" repeatCount="indefinite" />
+                    </rect>
+                  </g>
+                  
+                  <g id="back-wheel">
+                    <circle cx="470" cy="290" r="20" fill="#222" />
+                    <circle cx="470" cy="290" r="10" fill="#444" />
+                    <rect x="469" y="280" width="2" height="20" fill="#555">
+                      <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 470 290" to="360 470 290" dur="1s" repeatCount="indefinite" />
+                    </rect>
+                    <rect x="460" y="289" width="20" height="2" fill="#555">
+                      <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 470 290" to="360 470 290" dur="1s" repeatCount="indefinite" />
+                    </rect>
+                  </g>
+                </g>
+                
+                <!-- Digital aura around car -->
+                <g id="digital-aura">
+                  <ellipse cx="400" cy="260" rx="150" ry="40" fill="none" stroke="#00a8ff" stroke-width="1" opacity="0.3">
+                    <animate attributeName="opacity" values="0.1;0.3;0.1" dur="3s" repeatCount="indefinite" />
+                  </ellipse>
+                  <ellipse cx="400" cy="260" rx="170" ry="50" fill="none" stroke="#00a8ff" stroke-width="0.5" opacity="0.2">
+                    <animate attributeName="opacity" values="0.05;0.2;0.05" dur="4s" repeatCount="indefinite" />
+                  </ellipse>
+                </g>
+                
+                <!-- Digital elements coming from car (OS visualization) -->
+                <g id="os-elements">
+                  <!-- ECU connections -->
+                  <circle cx="350" cy="240" r="3" fill="#00ffff" opacity="0.7">
+                    <animate attributeName="r" values="2;4;2" dur="2s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="370" cy="250" r="2" fill="#00ffff" opacity="0.7">
+                    <animate attributeName="r" values="1;3;1" dur="1.5s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="390" cy="230" r="2" fill="#00ffff" opacity="0.7">
+                    <animate attributeName="r" values="1;3;1" dur="2.5s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="430" cy="245" r="3" fill="#00ffff" opacity="0.7">
+                    <animate attributeName="r" values="2;4;2" dur="3s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="450" cy="235" r="2" fill="#00ffff" opacity="0.7">
+                    <animate attributeName="r" values="1;3;1" dur="2s" repeatCount="indefinite" />
+                  </circle>
+                  
+                  <!-- Connection lines -->
+                  <line x1="350" y1="240" x2="340" y2="200" stroke="#00ffff" stroke-width="0.5" opacity="0.5">
+                    <animate attributeName="opacity" values="0.2;0.7;0.2" dur="2s" repeatCount="indefinite" />
+                  </line>
+                  <line x1="370" y1="250" x2="380" y2="190" stroke="#00ffff" stroke-width="0.5" opacity="0.5">
+                    <animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite" />
+                  </line>
+                  <line x1="390" y1="230" x2="420" y2="180" stroke="#00ffff" stroke-width="0.5" opacity="0.5">
+                    <animate attributeName="opacity" values="0.2;0.6;0.2" dur="2.5s" repeatCount="indefinite" />
+                  </line>
+                  <line x1="430" y1="245" x2="460" y2="200" stroke="#00ffff" stroke-width="0.5" opacity="0.5">
+                    <animate attributeName="opacity" values="0.3;0.7;0.3" dur="1.5s" repeatCount="indefinite" />
+                  </line>
+                  <line x1="450" y1="235" x2="480" y2="190" stroke="#00ffff" stroke-width="0.5" opacity="0.5">
+                    <animate attributeName="opacity" values="0.2;0.6;0.2" dur="2s" repeatCount="indefinite" />
+                  </line>
+                </g>
+                
+                <!-- Car movement animation -->
+                <animateTransform 
+                  xlink:href="#car"
+                  attributeName="transform"
+                  type="translate"
+                  values="-350,0; 50,0; 0,0; 50,0; -350,0"
+                  keyTimes="0; 0.3; 0.5; 0.7; 1"
+                  dur="12s"
+                  repeatCount="indefinite" />
+                  
+                <!-- Road lines movement animation -->
+                <animateTransform 
+                  xlink:href="#road-lines"
+                  attributeName="transform"
+                  type="translate"
+                  from="0 0"
+                  to="-100 0"
+                  dur="1s"
+                  repeatCount="indefinite" />
+                  
+                <!-- OS Text Animated -->
+                <text x="400" y="150" font-family="Arial, sans-serif" font-size="28" fill="#00a8ff" text-anchor="middle" opacity="0.9">
+                  Operating Systems in Modern Vehicles
+                  <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite" />
+                </text>
+                
+                <!-- Binary data flow effect -->
+                <g id="binary-data" opacity="0.6">
+                  <text x="320" y="170" font-family="monospace" font-size="10" fill="#00ffff">10110</text>
+                  <text x="370" y="180" font-family="monospace" font-size="10" fill="#00ffff">01001</text>
+                  <text x="420" y="165" font-family="monospace" font-size="10" fill="#00ffff">11010</text>
+                  <text x="470" y="175" font-family="monospace" font-size="10" fill="#00ffff">10101</text>
+                  
+                  <animateTransform 
+                    xlink:href="#binary-data"
+                    attributeName="transform"
+                    type="translate"
+                    values="0,0; 0,-30; 0,-60"
+                    keyTimes="0; 0.5; 1"
+                    dur="3s"
+                    repeatCount="indefinite" />
+                  <animate 
+                    xlink:href="#binary-data"
+                    attributeName="opacity"
+                    values="0.6;0.2;0"
+                    keyTimes="0; 0.5; 1"
+                    dur="3s"
+                    repeatCount="indefinite" />
+                </g>
+              </svg>
+
+
+              <li>Supervised By: Ms.Rawshan</li>
+              <li>Prepared By:</li>
+              <li>Anwar Omar</li>
+              <li>Mutih Aziz</li>
+              <li>Ibrahim Hussein</li>
+              <li>Fakhir Ameer</li>
+
+
+
+
+        </div>
+        <div class="slides-container">
+
+            <div class="slide" id="slide2">
+                <h2>Operating Systems</h2>
+                <div class="two-columns">
+                    <div class="column">
+                        <p>OS: stands for Operating System. It's the software that acts as an interface between the user and the computer hardware.</p>
+                        <ul>
+                            <li><span class="highlight">macOS</span></li>
+                            <li><span class="highlight">Microsoft Windows </span></li>
+                            <li><span class="highlight">Linux </span></li>
+                            <li><span class="highlight">Chrome OS</span></li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <p>🔧 What does an OS do?</p>
+                        <ul>
+                            <li>Manages hardware (CPU, memory, storage, etc.)</li>
+                            <li>Runs applications (like browsers, games, word processors)</li>
+                            <li>Provides a user interface (like Windows desktop or Android home screen)</li>
+                            <li>Handles files and security (reading/writing files, setting permissions, etc.)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide" id="slide3">
+                <h2>Evolution of Car Types by Technology</h2>
+                <div class="two-columns">
+                    <div class="column">
+                        <p>car will be 3 categories in general</p>
+                        <ol>
+                            <li><span class="highlight">Mechanical Era (Pre-1970s):</span> Pure mechanical engineering — no electronics or software. Simple, robust, and fully manual operation.</li>
+                            <li><span class="highlight">Hybrid Transition (2000s–Present):</span>Blend of internal combustion engine and electric motors with embedded systems for fuel optimization and power management.</li>
+                            <li><span class="highlight">Smart Electric Age (Present–Future):</span>Fully electric vehicles integrated with advanced high-level operating systems (e.g., Linux, QNX, Android Automotive) enabling autonomous driving, connectivity, and real-time diagnostics.</li>
+                        </ol>
+                    </div>
+                   
+                </div>
+            </div>
+            <div class="slide" id="slide4">
+                <h2>Evolution of Automotive Operating Systems</h2>
+                <p>Car operating systems have evolved dramatically over the decades:</p>
+                <ul>
+                    <li><span class="highlight">Pre-1970s:</span> Mechanical Mastery Before Electronics</li>
+                    <li><span class="highlight">1970s-1980s:</span> Simple embedded systems with minimal functionality</li>
+                    <li><span class="highlight">1990s-2000s:</span> Introduction of RTOS (Real-Time Operating Systems) for specific functions</li>
+                    <li><span class="highlight">2000s-2010s:</span> AUTOSAR standardization and integration of multiple ECUs</li>
+                    <li><span class="highlight">2010s-Present:</span> Complex distributed systems with high-level OS (Linux, QNX, Android Automotive)</li>
+                    <li><span class="highlight">Present-Future:</span> Hypervisor-based architectures with mixed-criticality systems</li>
+                </ul>
+            </div>
+            
+         
+            
+            <div class="slide" id="slide5">
+                <h2>Pre-1970s:</h2>
+                <ul>
+                    <li><span class="highlight">Mechanical Mastery Before Electronics</span> </li>
+                    <li><span class="highlight">🛠 Car Example:</span>  1967 Ford Mustang Fastback</li>
+                
+                </ul>
+                <div class="car-image">
+                    <img src="1967 Ford Mustang Fastback.jpg" alt="1984 Mercedes-Benz W123" onerror="this.src='https://via.placeholder.com/800x400?text=1984+Mercedes-Benz+W123'">
+                </div>
+            </div>
+
+
+            <div class="slide" id="slide6">
+                <h2>1970s-1980s: Simple embedded systems with minimal functionality</h2>
+                <ul>
+                    <li><span class="highlight"> Simple embedded systems with minimal functionality</span> </li>
+                    <li><span class="highlight">🛠 Car Example:</span>  1984 Mercedes-Benz W123</li>
+                   
+                </ul>
+                <div class="car-image">
+                    <img src="1984 Mercedes-Benz W123.jpg" alt="1984 Mercedes-Benz W123" onerror="this.src='https://via.placeholder.com/800x400?text=1984+Mercedes-Benz+W123'">
+                </div>
+            </div>
+
+
+            <div class="slide" id="slide7">
+                <h2>1990s-2000s: </h2>
+                <ul>
+                    <li><span class="highlight">Introduction of RTOS (Real-Time Operating Systems) for specific functions</span> </li>
+                    <li><span class="highlight">🛠 Car Example:</span>  1996 Toyota Camry</li>
+
+                </ul>
+                <div class="car-image">
+                    <img src="1996 Toyota Camry.jpg" alt="1984 Mercedes-Benz W123" onerror="this.src='https://via.placeholder.com/800x400?text=1984+Mercedes-Benz+W123'">
+                </div>
+            </div>
+
+
+
+            <div class="slide" id="slide8">
+                <h2>2000s-2010s:
+                </h2>
+                <ul>
+                    <li><span class="highlight"> AUTOSAR standardization and integration of multiple ECUs</span> </li>
+                    <li><span class="highlight">🛠 Car Example:</span>  2010 BMW 5 Series (F10)</li>
+                    
+                </ul>
+                <div class="car-image">
+                    <img src="2010 BMW 5 Series (F10).jpg" alt="1984 Mercedes-Benz W123" onerror="this.src='https://via.placeholder.com/800x400?text=1984+Mercedes-Benz+W123'">
+                </div>
+            </div>
+
+
+
+            <div class="slide" id="slide9">
+                <h2>2010s-Present:
+                </h2>
+                <ul>
+                    <li><span class="highlight"> Complex distributed systems with high-level OS (Linux, QNX, Android Automotive)</span> </li>
+                    <li><span class="highlight">🛠 Car Example:</span>  2022 Volvo XC40 Recharge (Android Automotive)</li>
+                    </ul>
+                    <div class="car-image">
+                        <img src="2022 Volvo XC40 Recharge (Android Automotive).jpg" alt="1984 Mercedes-Benz W123" onerror="this.src='https://via.placeholder.com/800x400?text=1984+Mercedes-Benz+W123'">
+                    </div>
+            </div>
+
+
+
+            <div class="slide" id="slide10">
+                <h2>Present-Future:
+                </h2>
+                <ul>
+                    <li><span class="highlight">Hypervisor-based architectures with mixed-criticality systems</span> </li>
+                    <li><span class="highlight">🛠 Car Example:</span>  2024 Tesla Model S</li>
+                    
+                </ul>
+                <div class="car-image">
+                    <img src="2024 Tesla Model S.jpg" alt="1984 Mercedes-Benz W123" onerror="this.src='https://via.placeholder.com/800x400?text=1984+Mercedes-Benz+W123'">
+                </div>
+            </div>
+
+
+
+            <div class="slide" id="slide11">
+                <h2>What are types of os in car?</h2>
+                <div class="two-columns">
+                    <div class="column">
+                        <p><span class="highlight">1. Real-Time Operating Systems (RTOS)</span></p>
+                        <ul>
+                            <li>Purpose: Manage time-critical operations like braking, steering, or engine control.</li>
+                            
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <p><span class="highlight">Examples:</span></p>
+                        <ul>
+                            <li><span class="highlight">OSEK</span></li>
+                            <li><span class="highlight">VxWorks</span> </li>
+                            <li><span class="highlight">FreeRTOS</span> </li>
+                            <li><span class="highlight">INTEGRITY</span> </li>
+
+                        </ul>
+                       
+
+                    </div>
+                    <li>Used in: Safety-critical systems like ABS, airbags, or engine control units (ECUs).</li>
+                </div>
+            </div>
+            
+            <div class="slide" id="slide12">
+                <h2></h2>
+                <div class="two-columns">
+                    <div class="column">
+                        <p><span class="highlight">2. High-Level General Purpose OS</span></p>
+                        <ul>
+                            <li>Purpose: Power infotainment systems, connectivity, and advanced user interfaces.</li>
+                           
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <p><span class="highlight">Examples:</span></p>
+                        <ul>
+                            <li>Linux (often in customized versions like AGL - Automotive Grade Linux)</li>
+                            <li>Android Automotive OS</li>
+                            <li>QNX (from BlackBerry, known for reliability in cars)</li>
+                           
+                        </ul>
+
+                    </div>
+                    <li>Used in: Touchscreens, navigation, entertainment, voice assistants, etc.</li>
+
+                </div>
+            </div>
+            
+            <div class="slide" id="slide13">
+                <h2></h2>
+                <div class="two-columns">
+                    <div class="column">
+                        <p><span class="highlight">3. AUTOSAR (AUTomotive Open System ARchitecture)
+                            
+                            </span></p>
+                        <ul>
+                            <li>Purpose: A standardized software framework to unify and simplify software development in ECUs.</li>
+                           
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <p><span class="highlight">Types:</span></p>
+                        <ul>
+                            <li>Classic Platform: For deeply embedded, real-time systems.</li>
+                            <li>Adaptive Platform: For high-performance computers (e.g., autonomous driving, V2X).</li>
+                           
+                        </ul>
+
+                    </div>
+                    <li>Used in: Engine control, chassis, body electronics, and advanced driver-assistance systems (ADAS).</li>
+
+                </div>
+            </div>
+
+              
+            <div class="slide" id="slide14">
+                <h2></h2>
+                <div class="two-columns">
+                    <div class="column">
+                        <p><span class="highlight">4. Hypervisors / Virtualization Platforms</span></p>
+                        <ul>
+                            <li>Purpose: Run multiple OS environments securely on the same hardware.</li>
+                           
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <p><span class="highlight">Examples:</span></p>
+                        <ul>
+                            <li>XEN</li>
+                            <li>QNX Hypervisor</li>
+                            <li>VMware Automotive</li>
+
+                        </ul>
+
+                    </div>
+                    <li>Used in: Mixed-criticality systems (e.g., infotainment + safety on same chip without interference).</li>
+
+                </div>
+            </div>
+
+
+            <div class="slide" id="slide15">
+                <div class="two-columns">
+                    <div class="column">
+                <h2>Time Sharing</h2>
+                <p>Time sharing is a method where the CPU's processing time is divided among multiple tasks or applications. In a car's OS, this helps ensure that all software components (like infotainment, navigation, and engine control) get the CPU time they need without one system hogging it all.</p>
+                    </div>
+                    <div class="column">
+                        <p><span class="highlight">How it Works in Cars:</span></p>
+                        <ul>
+                            <li>The CPU switches rapidly between different tasks (like checking speed sensors, updating the dashboard display, and managing audio playback).
+                            </li>
+                            <li>Each task gets a small slice of time, called a time quantum.</li>
+                            <li>If a task doesn’t finish in its allotted time, it’s paused and resumed later.</li>
+                        </ul>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="slide" id="slide16">
+                <h2>Why It’s Important in Automotive Systems:
+                </h2>
+                <ul>
+                    <li><span class="highlight">🕒 Real-time responsiveness: </span>  Safety-critical tasks (e.g., braking or collision warnings) must happen on time.</li>
+                    <li><span class="highlight">🚦 Fair resource allocation: </span>  Ensures infotainment doesn’t delay braking logic.</li>
+                    <li><span class="highlight">🧠 Supports multitasking:    </span>  Enables complex features like adaptive cruise control, voice commands, and entertainment to run smoothly together.</li>
+
+                </ul>
+              
+            </div>
+            
+            <div class="slide" id="slide17">
+                <h2>Thank You
+                    </h2>
+                    <h2>Any Questions?
+                    </h2>
+                
+              
+            </div>
+        </div>
+        
+        <div class="slide-indicator"></div>
+        
+        <div class="slide-nav">
+            <button id="prevBtn">Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+    </div>
+    
+    <script>
+        window.currentSlide = 0; // variable گشتی
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // وەرگرتنی ئەلیمنتە پێویستەکان
+            const slides = document.querySelectorAll('.slide');
+            const slideIndicatorContainer = document.querySelector('.slide-indicator');
+            const progressBar = document.querySelector('.progress-bar');
+            const nextBtn = document.getElementById('nextBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            
+            // دروستکردنی indicator ـەکان (dot)
+            slides.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.className = 'indicator-dot';
+                dot.addEventListener('click', () => showSlide(index));
+                slideIndicatorContainer.appendChild(dot);
+            });
+            
+            // فانکشنی بروزکردنی progress bar
+            function updateProgressBar() {
+                const progress = ((window.currentSlide + 1) / slides.length) * 100;
+                progressBar.style.width = progress + '%';
+            }
+            
+            // فانکشنی پێشاندانی slide ـەکان
+            function showSlide(index) {
+                if (index < 0) {
+                    index = 0;
+                } else if (index >= slides.length) {
+                    index = slides.length - 1;
+                }
+                
+                // لەسەر هەموو slide ـەکان هەموو style ـەکانی opacity, transform, visibility لەسەر "hidden" دەکرێن
+                slides.forEach(slide => {
+                    slide.style.opacity = '0';
+                    slide.style.transform = 'translateY(50px)';
+                    slide.style.visibility = 'hidden';
+                    slide.classList.remove('active');
+                });
+                
+                // گۆڕینی currentSlide ـەکە بە index ـی نوێ
+                window.currentSlide = index;
+                
+                // بروزکردنی indicator ـەکان
+                const indicatorDots = document.querySelectorAll('.indicator-dot');
+                indicatorDots.forEach((dot, i) => {
+                    if (i === window.currentSlide) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+                
+                // پێشانکردنی slide ـە دیاریکراو بە کەمێک delay بۆ transition ـی خۆکار
+                setTimeout(() => {
+                    slides[window.currentSlide].style.opacity = '1';
+                    slides[window.currentSlide].style.transform = 'translateY(0)';
+                    slides[window.currentSlide].style.visibility = 'visible';
+                    slides[window.currentSlide].classList.add('active');
+                }, 100);
+                
+                updateProgressBar();
+            }
+            
+            // Event listener ـەکان بۆ دوگمەکان
+            nextBtn.addEventListener('click', () => {
+                showSlide(window.currentSlide + 1);
+            });
+            
+            prevBtn.addEventListener('click', () => {
+                showSlide(window.currentSlide - 1);
+            });
+            
+            // Keyboard navigation بۆ ڕاست/چەپ
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight') {
+                    showSlide(window.currentSlide + 1);
+                } else if (e.key === 'ArrowLeft') {
+                    showSlide(window.currentSlide - 1);
+                }
+            });
+            
+            // دامەزراندنی سەرەکی slide ـەکان
+            showSlide(0);
+            
+            /* فانکشنی Animation ـەکان لە پاش DOM دامەزرابێ */
+            function createParticles() {
+                const particlesContainer = document.querySelector('.particles');
+                for (let i = 0; i < 100; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    const size = Math.random() * 3 + 1;
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    particle.style.left = Math.random() * 100 + 'vw';
+                    particle.style.top = Math.random() * 100 + 'vh';
+                    particle.style.opacity = Math.random() * 0.5 + 0.1;
+                    const duration = Math.random() * 20 + 10;
+                    particle.style.animation = `fadeInOut ${duration}s ease-in-out infinite`;
+                    particle.style.animationDelay = (Math.random() * 10) + 's';
+                    particlesContainer.appendChild(particle);
+                }
+            }
+            
+            function createCircuitLines() {
+                const circuitContainer = document.querySelector('.circuit-lines');
+                for (let i = 0; i < 15; i++) {
+                    const line = document.createElement('div');
+                    line.className = 'circuit-line';
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    const width = Math.random() * 200 + 50;
+                    const height = Math.random() * 2 + 1;
+                    line.style.left = x + 'vw';
+                    line.style.top = y + 'vh';
+                    line.style.width = width + 'px';
+                    line.style.height = height + 'px';
+                    const rotation = Math.random() * 360;
+                    line.style.transform = `rotate(${rotation}deg)`;
+                    circuitContainer.appendChild(line);
+                    
+                    // دروستکردنی nodes ـەکان لەسەر هەریەک لاین
+                    const numNodes = Math.floor(Math.random() * 3) + 1;
+                    for (let j = 0; j < numNodes; j++) {
+                        const node = document.createElement('div');
+                        node.className = 'circuit-node';
+                        const nodePos = Math.random() * width;
+                        node.style.left = x + 'vw';
+                        node.style.top = y + 'vh';
+                        node.style.transform = `translate(${nodePos}px, -2px) rotate(${rotation}deg)`;
+                        circuitContainer.appendChild(node);
+                    }
+                }
+            }
+            
+            function createBinaryElements() {
+                setInterval(function() {
+                    const binary = document.createElement('div');
+                    binary.className = 'binary';
+                    binary.style.left = Math.random() * window.innerWidth + 'px';
+                    binary.style.top = Math.random() * window.innerHeight + 'px';
+                    binary.textContent = Math.random() > 0.5 ? '1' : '0';
+                    document.querySelector('.animated-background').appendChild(binary);
+                    setTimeout(() => {
+                        if (binary && binary.parentNode) {
+                            binary.parentNode.removeChild(binary);
+                        }
+                    }, 3000);
+                }, 200);
+            }
+            
+            function createWaveEffects() {
+                const bgContainer = document.querySelector('.animated-background');
+                const waveContainer = document.createElement('div');
+                waveContainer.className = 'wave-container';
+                waveContainer.style.position = 'absolute';
+                waveContainer.style.bottom = '0';
+                waveContainer.style.width = '100%';
+                waveContainer.style.height = '100%';
+                waveContainer.style.overflow = 'hidden';
+                waveContainer.style.zIndex = '0';
+                
+                for (let i = 0; i < 3; i++) {
+                    const wave = document.createElement('div');
+                    wave.className = 'wave wave-' + i;
+                    wave.style.position = 'absolute';
+                    wave.style.bottom = (i * 10) + '%';
+                    wave.style.width = '200%';
+                    wave.style.height = '300px';
+                    wave.style.backgroundImage = `linear-gradient(to bottom, rgba(0, 191, 255, 0.${i+1}), transparent)`;
+                    wave.style.borderRadius = '40% 45% 43% 40%';
+                    wave.style.transform = 'translate(-25%)';
+                    wave.style.animation = `wave ${8 + i*2}s linear infinite`;
+                    wave.style.opacity = 0.05 + (i * 0.02);
+                    wave.style.zIndex = i;
+                    waveContainer.appendChild(wave);
+                }
+                
+                const styleSheet = document.createElement('style');
+                styleSheet.textContent = `
+                    @keyframes wave {
+                        0% {
+                            transform: translate(-25%) rotate(0deg);
+                        }
+                        50% {
+                            transform: translate(-30%) rotate(180deg);
+                        }
+                        100% {
+                            transform: translate(-25%) rotate(360deg);
+                        }
+                    }
+                `;
+                document.head.appendChild(styleSheet);
+                bgContainer.appendChild(waveContainer);
+            }
+            
+            function createTechParticles() {
+                const bgContainer = document.querySelector('.animated-background');
+                const particlesContainer = document.createElement('div');
+                particlesContainer.className = 'tech-particles';
+                particlesContainer.style.position = 'absolute';
+                particlesContainer.style.top = '0';
+                particlesContainer.style.left = '0';
+                particlesContainer.style.width = '100%';
+                particlesContainer.style.height = '100%';
+                particlesContainer.style.overflow = 'hidden';
+                particlesContainer.style.zIndex = '1';
+                
+                const canvas = document.createElement('canvas');
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                canvas.style.opacity = '0.15';
+                particlesContainer.appendChild(canvas);
+                bgContainer.appendChild(particlesContainer);
+                
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                const ctx = canvas.getContext('2d');
+                const particles = [];
+                const particleCount = 50;
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: (Math.random() - 0.5) * 0.5,
+                        size: Math.random() * 3 + 1,
+                        color: 'rgba(0, 191, 255, ' + (Math.random() * 0.5 + 0.1) + ')'
+                    });
+                }
+                
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    for (let i = 0; i < particles.length; i++) {
+                        const p = particles[i];
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                        for (let j = i + 1; j < particles.length; j++) {
+                            const p2 = particles[j];
+                            const dx = p.x - p2.x;
+                            const dy = p.y - p2.y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            if (distance < 100) {
+                                ctx.strokeStyle = `rgba(0, 191, 255, ${0.1 * (1 - distance / 100)})`;
+                                ctx.lineWidth = 0.5;
+                                ctx.beginPath();
+                                ctx.moveTo(p.x, p.y);
+                                ctx.lineTo(p2.x, p2.y);
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                    requestAnimationFrame(animate);
+                }
+                window.addEventListener('resize', function() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                });
+                animate();
+            }
+            
+            // پەیامدانی هەموو فانکشنە animation ـەکان
+            createParticles();
+            createCircuitLines();
+            createBinaryElements();
+            createWaveEffects();
+            createTechParticles();
+        });
+        </script>
+        
+</body>
